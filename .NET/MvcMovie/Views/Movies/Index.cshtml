@@ -1,0 +1,28 @@
+@model IEnumerable<MvcMovie.Models.Movie>
+
+@{ ViewData["Title"] = "Index"; }
+
+<h1>asd</h1>
+
+<p><a asp-action="Create" class="btn btn-primary">add</a></p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>name</th>
+            <th>data</th>
+            <th>genre</th>
+            <th>cena</th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>@item.Title</td>
+            <td>@item.ReleaseDate.ToShortDateString()</td>
+            <td>@item.Genre</td>
+            <td>@item.Price</td>
+        </tr>
+}
+    </tbody>
+</table>
