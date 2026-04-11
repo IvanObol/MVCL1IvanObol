@@ -2,17 +2,24 @@
 
 @{ ViewData["Title"] = "Index"; }
 
-<h1>asd</h1>
+<h1>Movie List</h1>
 
-<p><a asp-action="Create" class="btn btn-primary">add</a></p>
+<p><a asp-action="Create" class="btn btn-primary">Add New</a></p>
+
+<form asp-controller="Movies" asp-action="Index" method="get" class="mb-3">
+    <p>
+        Name: <input type="text" name="SearchString" />
+        <input type="submit" value="Search" class="btn btn-info" />
+    </p>
+</form>
 
 <table class="table">
     <thead>
         <tr>
-            <th>name</th>
-            <th>data</th>
-            <th>genre</th>
-            <th>cena</th>
+            <th>Name</th>
+            <th>Data</th>
+            <th>Genre</th>
+            <th>Cena</th>   <th>Rating</th> <th>Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -21,7 +28,11 @@
             <td>@item.Title</td>
             <td>@item.ReleaseDate.ToShortDateString()</td>
             <td>@item.Genre</td>
-            <td>@item.Price</td>
+            <td>@item.Price</td>  <td>@item.Rating</td> <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
         </tr>
 }
     </tbody>
