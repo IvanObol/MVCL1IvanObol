@@ -317,12 +317,29 @@ a:hover { color: inherit; }
 }
 
 .compact-grid {
-    display: flex; gap: 14px; overflow-x: auto; padding-bottom: 10px;
+    display: flex;
+    gap: 14px;
+    overflow-x: auto;
+    padding-bottom: 14px;
     scrollbar-width: thin;
+    scrollbar-color: #262626 rgba(0, 0, 0, 0.08);
 }
-.compact-grid::-webkit-scrollbar { height: 4px; }
-.compact-grid::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 10px; }
-.compact-grid::-webkit-scrollbar-track { background: transparent; }
+.compact-grid::-webkit-scrollbar {
+    height: 8px;
+}
+.compact-grid::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.08);
+    border-radius: 999px;
+    margin: 0 6px;
+}
+.compact-grid::-webkit-scrollbar-thumb {
+    background: #262626;
+    border-radius: 999px;
+    transition: background 0.15s ease;
+}
+.compact-grid::-webkit-scrollbar-thumb:hover {
+    background: #000;
+}
 .compact-grid .col-movie { flex: 0 0 32%; min-width: 150px; }
 
 .movie-card-mini {
