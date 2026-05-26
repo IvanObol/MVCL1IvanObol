@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Zaplanuj seans - Kinoza')}"></head>
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="section-card">
+    <div class="row g-4">
+        <!-- kalendarz interaktywny -->
+        <div class="col-lg-5">
+            <span class="badge-custom">Szykujmy twój seans razem</span>
+            <h2 class="fw-bold mb-2" style="letter-spacing:-0.01em;">Wybierz datę</h2>
+            <p class="text-muted small mb-3">
+                Filmy dostępne <strong th:text="${selectedDateLabel}">24 maja 2026</strong>.
+            </p>
+
+            <div class="zaplanuj-calendar" data-testid="zaplanuj-calendar"
+                 th:attr="data-active-dates=${#strings.listJoin(activeDates, ',')},data-selected=${selectedDate}">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <h5 class="fw-bold m-0" id="zp-month-label" data-testid="zp-month-label">…</h5>
+                    <div class="cal-nav">
+                        <button type="button" class="cal-nav-btn" data-zp-nav="-1" aria-label="Poprzedni">‹</button>
+                        <button type="button" class="cal-nav-btn" data-zp-nav="today" aria-label="Dzisiaj">•</button>
+                        <button type="button" class="cal-nav-btn" data-zp-nav="1" aria-label="Następny">›</button>
+                    </div>
+                </div>
+                <div class="row text-center g-2 fw-bold small zp-weekdays">
+                    <div class="col">Nd</div><div class="col">Pon</div><div class="col">Wt</div>
+                    <div class="col">Śr</div><div class="col">Czw</div><div class="col">Pt</div><div class="col">Sob</div>
+                </div>
+                <div id="zp-grid"></div>
+                <div class="d-flex gap-3 mt-3 small text-muted">
+                    <span><span class="zp-legend zp-legend-active"></span> dostępne</span>
+                    <span><span class="zp-legend zp-legend-selected"></span> wybrane</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- filmy i seansy na wybrany dzien -->
+        <div class="col-lg-7">
+            <h4 class="fw-bold mb-3">
+                Filmy <span th:text="${selectedDateLabel}">…</span>
+            </h4>
+
+            <div th:if="${#maps.isEmpty(groupedShowings)}" class="empty-tickets">
+                <div style="font-size:42px;line-height:1;">🎬</div>
+                <p class="mt-2 mb-1 fw-bold">Brak seansów tego dnia</p>
+                <p class="text-muted small m-0">Wybierz inną datę w kalendarzu po lewej.</p>
+            </div>
+
+            <div class="row g-3" data-testid="day-showings">
+                <div class="col-12" th:each="entry : ${groupedShowings}">
+                    <div class="day-movie-card">
+                        <a th:href="@{/movie/{id}(id=${entry.key.id})}" class="d-flex gap-3 text-decoration-none">
+                            <img th:src="${entry.key.posterUrl}" alt="" class="day-poster">
+                            <div class="flex-grow-1">
+                                <h5 class="fw-bold m-0" th:text="${entry.key.title}">Tytuł</h5>
+                                <small class="text-muted"
+                                       th:text="${entry.key.genre + ' · ' + entry.key.duration + ' min · ' + entry.key.ageLimit}">info</small>
+                                <div class="mt-2 d-flex flex-wrap gap-2">
+                                    <a th:each="s : ${entry.value}"
+                                       th:href="@{/bilety/{id}(id=${entry.key.id})}"
+                                       class="time-pill"
+                                       th:text="${#temporals.format(s.startTime, 'HH:mm')} + ' · ' + ${s.cinema.name}">
+                                        17:45 · Kinoza Arkadia
+                                    </a>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:replace="~{fragments/navbar :: navbarScript}"></script>
+
+<script>
+(function () {
+    const cal       = document.querySelector('[data-testid="zaplanuj-calendar"]');
+    const grid      = document.getElementById('zp-grid');
+    const label     = document.getElementById('zp-month-label');
+    if (!cal || !grid || !label) return;
+
+    const activeDates = (cal.dataset.activeDates || '').split(',').filter(Boolean);
+    const selected    = cal.dataset.selected || null;
+    const MONTHS_PL = ['Styczeń','Luty','Marzec','Kwiecień','Maj','Czerwiec',
+                       'Lipiec','Sierpień','Wrzesień','Październik','Listopad','Grudzień'];
+
+    let view = selected ? new Date(selected + 'T00:00') : new Date();
+    let viewYear  = view.getFullYear();
+    let viewMonth = view.getMonth();
+
+    function pad(n) { return n < 10 ? '0' + n : '' + n; }
+    function makeRow() {
+        const r = document.createElement('div');
+        r.className = 'row text-center g-2 mt-2 small';
+        return r;
+    }
+    function makeCell(html) {
+        const c = document.createElement('div');
+        c.className = 'col';
+        c.innerHTML = html;
+        return c;
+    }
+    function render() {
+        label.textContent = MONTHS_PL[viewMonth] + ' ' + viewYear;
+        grid.innerHTML = '';
+        const firstDay = new Date(viewYear, viewMonth, 1).getDay();
+        const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+
+        let row = makeRow();
+        for (let i = 0; i < firstDay; i++) row.appendChild(makeCell(''));
+
+        let dow = firstDay;
+        for (let d = 1; d <= daysInMonth; d++) {
+            const dateStr = viewYear + '-' + pad(viewMonth + 1) + '-' + pad(d);
+            const isActive = activeDates.includes(dateStr);
+            const isSelected = (dateStr === selected);
+            const cls = ['zp-day'];
+            if (dow === 0) cls.push('is-sunday');
+            if (dow === 6) cls.push('is-saturday');
+            if (isActive) cls.push('is-active');
+            if (isSelected) cls.push('is-selected');
+
+            const cell = makeCell(
+                '<a class="' + cls.join(' ') + '"'
+                + ' href="/zaplanuj?date=' + dateStr + '"'
+                + ' data-testid="zp-day-' + d + '"'
+                + ' title="' + dateStr + '">' + d + '</a>'
+            );
+            row.appendChild(cell);
+            dow = (dow + 1) % 7;
+            if (dow === 0 && d !== daysInMonth) {
+                grid.appendChild(row);
+                row = makeRow();
+            }
+        }
+        while (dow !== 0 && dow < 7) {
+            row.appendChild(makeCell(''));
+            dow++;
+        }
+        grid.appendChild(row);
+    }
+
+    document.querySelectorAll('[data-zp-nav]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const v = btn.dataset.zpNav;
+            if (v === 'today') {
+                const today = new Date();
+                viewYear  = today.getFullYear();
+                viewMonth = today.getMonth();
+            } else {
+                viewMonth += parseInt(v, 10);
+                if (viewMonth < 0)  { viewMonth = 11; viewYear--; }
+                if (viewMonth > 11) { viewMonth = 0;  viewYear++; }
+            }
+            render();
+        });
+    });
+    render();
+})();
+</script>
+
+<style>
+    .zaplanuj-calendar {
+        background: rgba(0,0,0,0.05);
+        border-radius: 22px;
+        padding: 20px;
+    }
+    .zaplanuj-calendar .cal-nav-btn {
+        background: #262626;
+        color: #FAFFBE;
+        border: none;
+        border-radius: 8px;
+        width: 30px; height: 30px;
+        font-size: 16px;
+        line-height: 1;
+        cursor: pointer;
+        transition: background .15s;
+    }
+    .zaplanuj-calendar .cal-nav-btn:hover { background: #000; }
+    .zp-weekdays > .col {
+        color: rgba(0,0,0,0.5);
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    a.zp-day, a.zp-day:link, a.zp-day:visited {
+        display: block;
+        text-align: center;
+        font-size: 14px;
+        line-height: 1;
+        padding: 10px 0;
+        border-radius: 10px;
+        color: #000 !important;
+        text-decoration: none !important;
+        background: transparent;
+        transition: background 0.12s ease, transform 0.1s ease;
+        font-weight: 500;
+    }
+    a.zp-day:hover { background: rgba(0,0,0,0.08); transform: scale(1.04); }
+    a.zp-day.is-active {
+        background: #FAFFBE;
+        font-weight: 700;
+        box-shadow: inset 0 0 0 1.5px #262626;
+    }
+    a.zp-day.is-active:hover { background: #F0F6AF; }
+    a.zp-day.is-selected {
+        background: #262626 !important;
+        color: #FAFFBE !important;
+        font-weight: 800;
+        box-shadow: none;
+    }
+    a.zp-day.is-sunday { color: #d33b3b !important; }
+    a.zp-day.is-saturday { color: #a07a00 !important; }
+
+    .zp-legend {
+        display: inline-block; width: 12px; height: 12px;
+        border-radius: 3px; vertical-align: middle; margin-right: 4px;
+    }
+    .zp-legend-active { background: #FAFFBE; box-shadow: inset 0 0 0 1.5px #262626; }
+    .zp-legend-selected { background: #262626; }
+
+    .day-movie-card {
+        background: #FDFFD1;
+        border: 1px solid rgba(0,0,0,0.08);
+        border-radius: 18px;
+        padding: 16px;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .day-movie-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.12); }
+    .day-movie-card a { color: #000 !important; }
+    .day-poster {
+        width: 80px; height: 110px;
+        object-fit: cover; border-radius: 10px; flex-shrink: 0;
+    }
+    .time-pill {
+        background: #262626;
+        color: #FAFFBE !important;
+        border-radius: 999px;
+        padding: 7px 16px;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: background 0.15s ease;
+    }
+    .time-pill:hover { background: #000; color: #FAFFBE !important; }
+
+    .empty-tickets {
+        background: rgba(0,0,0,0.05);
+        border-radius: 16px;
+        padding: 24px;
+        text-align: center;
+    }
+</style>
+</body>
+</html>

@@ -174,7 +174,7 @@
             backdrop.classList.add('is-open');
         }
         triggers.forEach(btn => btn.addEventListener('click', e => {
-            // Logo: jeśli nie jesteś na "/", po prostu przekieruj na "/"
+            //  jeśli nie jesteś na "/", po prostu przekieruj na "/"
             if (btn.hasAttribute('data-logo')) {
                 if (window.location.pathname !== '/' && window.location.pathname !== '') {
                     return; // pozwol link odprawic
@@ -193,7 +193,7 @@
             if (!e.target.closest('.kinoza-panel') && !e.target.closest('[data-megamenu]')) closeAll();
         });
 
-        // ----- Language modal -----
+        // Language modal
         const langToggle = document.querySelector('[data-lang-toggle]');
         const langModal = document.getElementById('kinoza-lang-modal');
         if (langToggle && langModal) {
