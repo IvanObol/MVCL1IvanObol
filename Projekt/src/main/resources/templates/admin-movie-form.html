@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Dodaj film')}"></head>
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="section-card" style="max-width:700px;">
+    <h2 class="fw-bold mb-4">Nowy film</h2>
+
+    <form action="/admin/movie/save" method="post">
+        <div class="row g-3">
+            <div class="col-md-8">
+                <label class="form-label">Tytuł</label>
+                <input class="kinoza-input" name="title" required>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Reżyser</label>
+                <input class="kinoza-input" name="director">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Gatunek</label>
+                <input class="kinoza-input" name="genre">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Czas (min)</label>
+                <input class="kinoza-input" type="number" name="duration">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Ocena</label>
+                <input class="kinoza-input" type="number" step="0.1" name="rating">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Limit wieku</label>
+                <input class="kinoza-input" name="ageLimit" placeholder="12+">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Kraj</label>
+                <input class="kinoza-input" name="country">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Rok</label>
+                <input class="kinoza-input" type="number" name="releaseYear">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Język</label>
+                <input class="kinoza-input" name="language" value="PL">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Format</label>
+                <input class="kinoza-input" name="format" value="2D">
+            </div>
+            <div class="col-12">
+                <label class="form-label">URL plakatu</label>
+                <input class="kinoza-input" name="posterUrl" placeholder="/images/...">
+            </div>
+            <div class="col-12">
+                <label class="form-label">Opis</label>
+                <textarea class="kinoza-input" name="description" rows="3"></textarea>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Status</label>
+                <select class="kinoza-input" name="status">
+                    <option value="NOW_PLAYING">Teraz w kinie</option>
+                    <option value="COMING_SOON">Premiery</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="mt-4 d-flex gap-2">
+            <button type="submit" class="btn-reserve-main">Zapisz film</button>
+            <a href="/admin" class="btn-outline-main">Anuluj</a>
+        </div>
+    </form>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:replace="~{fragments/navbar :: navbarScript}"></script>
+</body>
+</html>

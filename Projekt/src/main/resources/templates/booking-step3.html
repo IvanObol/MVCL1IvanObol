@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Dane i platnosc - Kinoza')}"></head>
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<form th:action="@{/bilety/payment}" method="post">
+  <div class="section-card p-0" style="background:transparent;box-shadow:none;">
+  <div class="row g-4 align-items-stretch m-0">
+
+    <!-- tylko opis kroku oraz przycisk dalej -->
+    <div class="col-lg-5">
+      <div class="step-info-card">
+        <a href="javascript:history.back()" class="back-pill" data-testid="booking-back-link">
+          &larr; Wroc
+        </a>
+
+        <div class="mt-4">
+          <span class="step-indicator">Krok 3</span>
+          <h2 class="fw-bold mt-2">Dane i platnosc</h2>
+        </div>
+
+        <p class="mt-auto pt-5" style="font-size:18px;line-height:1.4;">
+          Uzupelnij dane kontaktowe,
+          wybierz metode platnosci i przejdz
+          do finalnego sprawdzenia.
+        </p>
+
+        <button type="submit" class="back-pill mt-2"
+                style="font-weight:600;padding:14px 28px;"
+                data-testid="booking-step3-submit">
+          Przejdz do sprawdzenia &rarr;
+        </button>
+      </div>
+    </div>
+
+    <!-- formularz oraz metody platnosci -->
+    <div class="col-lg-7">
+      <div class="step-info-card">
+        <h5 class="fw-bold">Dane do platnosci</h5>
+        <p class="text-muted small">
+          Podaj dane, na ktore wyslemy potwierdzenie zakupu i bilet.
+        </p>
+
+        <div class="row g-3 mt-1">
+          <div class="col-12">
+            <input class="kinoza-input-pill" name="firstName" placeholder="Imie"
+                   required data-testid="input-first-name">
+          </div>
+          <div class="col-12">
+            <input class="kinoza-input-pill" name="lastName" placeholder="Nazwisko"
+                   required data-testid="input-last-name">
+          </div>
+          <div class="col-12">
+            <input class="kinoza-input-pill" name="email" type="email" placeholder="Adres e-mail"
+                   required data-testid="input-email">
+          </div>
+          <div class="col-12">
+            <input class="kinoza-input-pill" name="phone" placeholder="Numer telefonu"
+                   data-testid="input-phone">
+          </div>
+        </div>
+
+        <p class="text-muted small mt-4 mb-2">
+          Wybierz sposob platnosci. Finalne potwierdzenie w kolejnym kroku.
+        </p>
+
+        <label class="payment-pill" data-testid="payment-blik">
+          <input type="radio" name="paymentMethod" value="BLIK" required hidden>
+          <div class="fw-bold">BLIK</div>
+          <small class="text-muted d-block mt-1">Szybka platnosc kodem BLIK.</small>
+        </label>
+
+        <label class="payment-pill" data-testid="payment-karta">
+          <input type="radio" name="paymentMethod" value="KARTA" hidden>
+          <div class="fw-bold">Karta platnicza</div>
+          <small class="text-muted d-block mt-1">Visa, Mastercard i inne karty.</small>
+        </label>
+
+        <label class="payment-pill" data-testid="payment-apple">
+          <input type="radio" name="paymentMethod" value="APPLE" hidden>
+          <div class="fw-bold">Apple Pay</div>
+          <small class="text-muted d-block mt-1">Platnosc Apple.</small>
+        </label>
+
+        <div class="text-muted small mt-3 text-center" data-testid="step3-mini-summary">
+          Wybrane miejsca: <strong th:text="${#lists.size(seats)}">1</strong> szt.
+          · Razem <strong th:text="${totalPrice} + ' zl'">28 zl</strong>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  </div>
+</form>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:replace="~{fragments/navbar :: navbarScript}"></script>
+<script>
+  document.querySelectorAll('.payment-pill').forEach(opt => {
+    opt.addEventListener('click', () => {
+      document.querySelectorAll('.payment-pill').forEach(o => o.classList.remove('is-selected'));
+      opt.classList.add('is-selected');
+      opt.querySelector('input[type=radio]').checked = true;
+    });
+  });
+</script>
+
+<style>
+  .step-info-card {
+    background: #FDFFD1;
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 26px;
+    padding: 32px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  .back-pill {
+    display: inline-block;
+    background: #FAFFBE;
+    border: 1px solid #000;
+    border-radius: 999px;
+    padding: 8px 18px;
+    color: #000;
+    text-decoration: none;
+    font-size: 14px;
+    align-self: flex-start;
+    transition: background .15s;
+  }
+  .back-pill:hover { background: #f0f6af; color: #000; }
+  button.back-pill { cursor: pointer; }
+
+  .kinoza-input-pill {
+    width: 100%;
+    background: transparent;
+    border: 1.5px solid #000;
+    border-radius: 999px;
+    padding: 12px 22px;
+    font-size: 15px;
+    outline: none;
+    transition: background .12s;
+  }
+  .kinoza-input-pill:focus { background: #FAFFBE; }
+
+  .payment-pill {
+    display: block;
+    background: transparent;
+    border: 1.5px solid #000;
+    border-radius: 22px;
+    padding: 14px 22px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: background .12s;
+  }
+  .payment-pill:hover { background: #FAFFBE; }
+  .payment-pill.is-selected,
+  .payment-pill.is-selected .fw-bold,
+  .payment-pill.is-selected .text-muted,
+  .payment-pill.is-selected small {
+    background: #262626;
+    color: #FAFFBE !important;
+    border-color: #262626;
+  }
+  .payment-pill.is-selected { background: #262626; }
+  .payment-pill.is-selected .text-muted { color: rgba(250,255,190,0.7) !important; }
+</style>
+
+</body>
+</html>

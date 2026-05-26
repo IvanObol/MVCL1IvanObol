@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Bilety kupione!')}"></head>
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="section-card text-center" style="padding:80px 40px;" data-testid="success-card">
+    <div style="font-size:80px;">&#127916;</div>
+    <h1 class="fw-bold mt-3">
+        <span th:if="${ticketCount > 1}"
+              th:text="'Bilety kupione! (' + ${ticketCount} + ' szt.)'"
+              data-testid="success-title">Bilety kupione!</span>
+        <span th:if="${ticketCount == 1}" data-testid="success-title">Bilet kupiony!</span>
+    </h1>
+    <p class="lead">
+        Potwierdzenie zostalo wyslane na adres
+        <strong th:text="${email}" data-testid="success-email">email</strong>.
+    </p>
+    <p class="text-muted">
+        Zaplacono: <strong><span th:text="${totalPrice}">28</span> zl</strong>.
+        Do zobaczenia w kinie &#10024;
+    </p>
+    <div class="mt-4 d-flex gap-3 justify-content-center">
+        <a href="/" class="btn-reserve-main">Powrot na strone glowna</a>
+        <a href="/moje-kino" class="btn-outline-main">Moje bilety</a>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:replace="~{fragments/navbar :: navbarScript}"></script>
+</body>
+</html>

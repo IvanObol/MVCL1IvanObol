@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Sprawdz i zaplac - Kinoza')}"></head>
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="section-card">
+    <a href="javascript:history.back()" class="text-muted text-decoration-none"
+       data-testid="booking-back-link">&larr; Wroc</a>
+
+    <div class="mt-3 mb-4">
+        <span class="step-indicator">Krok 4</span>
+        <h2 class="fw-bold mt-2">Sprawdz i zaplac</h2>
+        <p>Upewnij sie, ze wszystkie dane sa poprawne, zanim przejdziesz do bezpiecznej platnosci.</p>
+    </div>
+
+    <div class="row g-4">
+        <!-- seans oraz dane -->
+        <div class="col-md-7">
+            <h5 class="fw-bold">Szczegoly seansu
+                <a href="javascript:history.back()" class="float-end small text-muted">Zmien seans</a>
+            </h5>
+            <div class="d-flex gap-3 align-items-center mb-3 p-3"
+                 style="background:#F0F6AF;border-radius:14px;">
+                <img th:src="${showing.movie.posterUrl}" alt=""
+                     style="width:70px;height:100px;object-fit:cover;border-radius:8px;">
+                <div>
+                    <h6 class="fw-bold m-0" th:text="${showing.movie.title}">Film</h6>
+                    <small th:text="${showing.movie.genre + ' · ' + showing.movie.ageLimit + ' · ' + showing.movie.language + ' · ' + showing.movie.format}">info</small><br>
+                    <small>
+                        <span th:text="${showing.cinema.name}">Kino</span> ·
+                        <span th:text="${#temporals.format(showing.startTime, 'dd MMM, HH:mm')}">data</span> ·
+                        Sala <span th:text="${showing.hallNumber}">3</span>
+                    </small>
+                </div>
+            </div>
+
+            <h5 class="fw-bold">Twoje miejsca
+                (<span th:text="${#lists.size(seats)}" data-testid="summary-seat-count">1</span> szt.)
+            </h5>
+            <div class="d-flex flex-wrap gap-2 mb-3" data-testid="summary-seats-list">
+                <span th:each="s : ${seats}"
+                      class="seat-chip"
+                      th:text="'Rzad ' + ${s.rowNum} + ', miejsce ' + ${s.seatNum}">Rzad 3, miejsce 4</span>
+            </div>
+
+            <h5 class="fw-bold">Twoje dane
+                <a href="javascript:history.back()" class="float-end small text-muted">Edytuj dane</a>
+            </h5>
+            <p class="m-0">
+                <strong>
+                    <span th:text="${firstName}">Imie</span>
+                    <span th:text="${lastName}">Nazwisko</span>
+                </strong><br>
+                <span th:text="${email}">email</span><br>
+                <span th:text="${phone}">telefon</span><br>
+                Metoda: <strong th:text="${paymentMethod}" data-testid="summary-payment-method">BLIK</strong>
+            </p>
+
+            <div class="mt-4">
+                <label class="d-block mb-2">
+                    <input type="checkbox" required data-testid="agree-regulamin">
+                    Akceptuje regulamin zakupu biletow oraz polityke prywatnosci.
+                </label>
+                <label class="d-block">
+                    <input type="checkbox" data-testid="agree-news">
+                    Chce otrzymywac informacje o premierach, promocjach i wydarzeniach Kinoza.
+                </label>
+            </div>
+        </div>
+
+        <!-- cena -->
+        <div class="col-md-5">
+            <div class="inner-dark-card" style="color:#FAFFBE;">
+                <h5 class="fw-bold mb-3">Podsumowanie ceny</h5>
+                <div class="d-flex justify-content-between">
+                    <span>Bilet <span th:text="${ticketPrice}">28</span> zl &times; <span th:text="${#lists.size(seats)}">1</span></span>
+                    <span th:text="${totalPrice} + ' zl'">28 zl</span>
+                </div>
+                <hr style="border-color:#555;">
+                <div class="d-flex justify-content-between fw-bold">
+                    <span>Razem</span>
+                    <span data-testid="step4-total" th:text="${totalPrice} + ' zl'">28 zl</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <form th:action="@{/bilety/confirm}" method="post" class="text-end mt-4">
+        <button type="submit" class="btn-reserve-main" data-testid="booking-pay-btn">
+            Zaplac <span th:text="${totalPrice}">28</span> zl &rarr;
+        </button>
+    </form>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:replace="~{fragments/navbar :: navbarScript}"></script>
+
+<style>
+    .seat-chip {
+        background: #FAFFBE;
+        border: 1px solid rgba(0,0,0,0.15);
+        border-radius: 999px;
+        padding: 6px 14px;
+        font-size: 14px;
+    }
+</style>
+</body>
+</html>

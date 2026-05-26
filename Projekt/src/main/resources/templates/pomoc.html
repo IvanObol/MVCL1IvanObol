@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Pomoc - Kinoza')}"></head>
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="section-card">
+    <span class="badge-custom">Jesteśmy chętni do pomocy</span>
+    <h2 class="fw-bold">FAQ</h2>
+    <p>Znajdź odpowiedzi na najważniejsze pytania dotyczące zakupu biletów, płatności, wyboru miejsc i działania konta.</p>
+
+    <div class="accordion mt-4" id="faqFull">
+        <div class="accordion-item mb-2" style="background:#F0F6AF;border-radius:16px;">
+            <h2 class="accordion-header"><button class="accordion-button rounded-3" type="button"
+                                                 data-bs-toggle="collapse" data-bs-target="#f1" style="background:transparent;">
+                Jak kupić bilet online?</button></h2>
+            <div id="f1" class="accordion-collapse collapse show" data-bs-parent="#faqFull">
+                <div class="accordion-body">Wybierz film, datę i godzinę seansu, zaznacz miejsca i przejdź do płatności. Po zakupie bilet znajdziesz w swoim koncie oraz w e-mailu.</div>
+            </div>
+        </div>
+        <div class="accordion-item mb-2" style="background:#F0F6AF;border-radius:16px;">
+            <h2 class="accordion-header"><button class="accordion-button collapsed rounded-3" type="button"
+                                                 data-bs-toggle="collapse" data-bs-target="#f2" style="background:transparent;">
+                Czy mogę wybrać konkretne miejsca na sali?</button></h2>
+            <div id="f2" class="accordion-collapse collapse" data-bs-parent="#faqFull">
+                <div class="accordion-body">Tak, system pozwala wybrać dowolne dostępne miejsce na interaktywnej mapie sali przed płatnością.</div>
+            </div>
+        </div>
+        <div class="accordion-item mb-2" style="background:#F0F6AF;border-radius:16px;">
+            <h2 class="accordion-header"><button class="accordion-button collapsed rounded-3" type="button"
+                                                 data-bs-toggle="collapse" data-bs-target="#f3" style="background:transparent;">
+                Gdzie znajdę kupiony bilet?</button></h2>
+            <div id="f3" class="accordion-collapse collapse" data-bs-parent="#faqFull">
+                <div class="accordion-body">Bilet zostanie wysłany na podany e-mail i będzie dostępny w panelu „Moje kino".</div>
+            </div>
+        </div>
+        <div class="accordion-item mb-2" style="background:#F0F6AF;border-radius:16px;">
+            <h2 class="accordion-header"><button class="accordion-button collapsed rounded-3" type="button"
+                                                 data-bs-toggle="collapse" data-bs-target="#f4" style="background:transparent;">
+                Jakie metody płatności są dostępne?</button></h2>
+            <div id="f4" class="accordion-collapse collapse" data-bs-parent="#faqFull">
+                <div class="accordion-body">Akceptujemy BLIK, karty (Visa, Mastercard) oraz Apple Pay.</div>
+            </div>
+        </div>
+        <div class="accordion-item mb-2" style="background:#F0F6AF;border-radius:16px;">
+            <h2 class="accordion-header"><button class="accordion-button collapsed rounded-3" type="button"
+                                                 data-bs-toggle="collapse" data-bs-target="#f5" style="background:transparent;">
+                Czy mogę anulować lub zwrócić bilet?</button></h2>
+            <div id="f5" class="accordion-collapse collapse" data-bs-parent="#faqFull">
+                <div class="accordion-body">Tak, bilet można zwrócić najpóźniej 2 godziny przed seansem przez panel użytkownika.</div>
+            </div>
+        </div>
+        <div class="accordion-item mb-2" style="background:#F0F6AF;border-radius:16px;">
+            <h2 class="accordion-header"><button class="accordion-button collapsed rounded-3" type="button"
+                                                 data-bs-toggle="collapse" data-bs-target="#f6" style="background:transparent;">
+                Czym jest lista „Chcę obejrzeć"?</button></h2>
+            <div id="f6" class="accordion-collapse collapse" data-bs-parent="#faqFull">
+                <div class="accordion-body">To Twoja prywatna lista filmów i zapowiedzi, do których łatwo wrócisz w przyszłości.</div>
+            </div>
+        </div>
+        <div class="accordion-item" style="background:#F0F6AF;border-radius:16px;">
+            <h2 class="accordion-header"><button class="accordion-button collapsed rounded-3" type="button"
+                                                 data-bs-toggle="collapse" data-bs-target="#f7" style="background:transparent;">
+                Czy mogę korzystać z Kinoza bez konta?</button></h2>
+            <div id="f7" class="accordion-collapse collapse" data-bs-parent="#faqFull">
+                <div class="accordion-body">Tak, możesz przeglądać repertuar i kupować bilety jako gość. Konto ułatwia zarządzanie biletami.</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:replace="~{fragments/navbar :: navbarScript}"></script>
+</body>
+</html>

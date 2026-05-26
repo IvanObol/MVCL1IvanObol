@@ -1,171 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kinoza - Twój Repertuar</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #262626;
-            color: #000000;
-            font-family: 'Aeonik TRIAL', sans-serif;
-            margin: 0;
-        }
-
-        .custom-navbar {
-            background: #FAFFBE;
-            border-radius: 16px;
-            margin: 20px auto;
-            max-width: 1100px;
-            padding: 10px 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-
-        .hero-section {
-            background: #FAFFBE;
-            border-radius: 30px;
-            max-width: 1100px;
-            margin: 0 auto 60px;
-            min-height: 654px;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            padding: 0 50px;
-        }
-
-
-        .hero-content {
-            max-width: 540px;
-            z-index: 5;
-        }
-
-        .hero-title {
-            font-weight: 700;
-            font-size: 120px;
-            line-height: 1;
-            margin-bottom: 30px;
-            color: #000;
-        }
-
-        .hero-description {
-            font-size: 18px;
-            line-height: 1.2;
-            margin-bottom: 40px;
-            color: #000;
-        }
-
-        .btn-reserve-main {
-            background: #262626;
-            color: #FAFFBE;
-            border-radius: 50px;
-            padding: 10px 25px;
-            text-decoration: none;
-            display: inline-block;
-            border: none;
-        }
-
-        .btn-outline-main {
-            border: 1px solid #262626;
-            color: #262626;
-            border-radius: 50px;
-            padding: 10px 25px;
-            text-decoration: none;
-            display: inline-block;
-            margin-left: 15px;
-        }
-
-        .hero-collage {
-            position: absolute;
-            right: 0;
-            top: 0;
-            width: 62%;
-            height: 100%;
-            background-image: url('/images/hero-collage.jpg');
-            background-size: cover;
-            background-position: center;
-            z-index: 1;
-        }
-
-        .repertuar-container {
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-
-        .repertuar-title {
-            color: #FAFFBE;
-            letter-spacing: 2px;
-            margin-bottom: 40px;
-        }
-
-        .movie-card {
-            background: #FAFFBE;
-            border-radius: 20px;
-            border: none;
-            color: #000;
-            transition: transform 0.3s;
-        }
-
-        .movie-card:hover { transform: translateY(-10px); }
-
-        .poster-img {
-            width: 100%;
-            height: 400px;
-            object-fit: cover;
-            border-radius: 15px;
-        }
-
-        .btn-reserve-small {
-            border: 1px solid #000;
-            color: #000;
-            text-decoration: none;
-            display: block;
-            text-align: center;
-            padding: 8px;
-            border-radius: 10px;
-            margin-top: 15px;
-        }
-    </style>
-</head>
+<head th:replace="~{fragments/head :: head('Kinoza - Twój Repertuar')}"></head>
 <body>
 
-<div class="custom-navbar shadow-sm">
-    <div class="d-flex gap-4 align-items-center">
-        <a href="#">
-            <img src="/images/Kinoza.jpg" alt="Kinoza" style="height: 35px;">
-        </a>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
 
-        <a href="#">
-            <img src="/images/menu.jpg" alt="Menu" style="height: 35px;">
-        </a>
-    </div>
-
-    <div class="d-flex align-items-center gap-2">
-
-        <a href="#">
-            <img src="/images/search-btn.jpg" alt="Szukaj" style="height: 35px;">
-        </a>
-
-        <a href="#">
-            <img src="/images/kup-bilet-btn.jpg" alt="Kup bilet" style="height: 35px;">
-        </a>
-
-        <a href="#">
-            <img src="/images/user-icon.jpg" alt="User" style="height: 35px;">
-        </a>
-
-        <a href="#">
-            <img src="/images/lang-btn.jpg" alt="PL" style="height: 35px;">
-        </a>
-
-    </div>
-</div>
-
-
+<!-- Glowna z kartkami -->
 <div class="hero-section shadow-lg">
     <div class="hero-content">
         <h1 class="hero-title">Kinoza</h1>
@@ -174,30 +14,173 @@
             bilety online i osobiste filmowe doświadczenia użytkownika w jednym miejscu.
         </p>
         <div class="hero-btns">
-            <a href="#" class="btn-reserve-main shadow">Kup bilet</a>
-            <a href="#movies" class="btn-outline-main">Zobacz repertuar</a>
+            <a href="/bilety/1" class="btn-reserve-main shadow">Kup bilet</a>
+            <a href="#teraz" class="btn-outline-main">Zobacz repertuar</a>
         </div>
     </div>
-    <div class="hero-collage"></div>
+    <div class="hero-collage-container">
+        <img src="/images/hero-collage (2).png" alt="">
+    </div>
 </div>
 
-<div id="movies" class="repertuar-container container">
-    <h2 class="repertuar-title fw-bold text-uppercase">Aktualny repertuar</h2>
+<!-- Teraz w kinie oraz Premiery -->
+<div class="movies-row-container" id="teraz">
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="figma-block shadow-lg">
+                <h4 class="fw-bold mb-3">Teraz w kinie</h4>
+                <div class="compact-grid">
+                    <div class="col-movie" th:each="movie : ${nowPlaying}">
+                        <a th:href="@{/movie/{id}(id=${movie.id})}" class="text-decoration-none">
+                            <div class="movie-card-mini">
+                                <img th:src="${movie.posterUrl}" class="poster-img-mini" alt="">
+                                <div class="fw-bold text-truncate" th:text="${movie.title}">Tytuł</div>
+                                <div class="d-flex justify-content-between mt-1 small">
+                                    <span th:text="${movie.genre}">Gatunek</span>
+                                    <span style="color:#ffc107;">★ <span th:text="${movie.rating}"></span></span>
+                                </div>
+                                <span class="btn btn-light btn-sm w-100 rounded-pill mt-2 fw-bold" style="pointer-events:none;">
+                                    Zarezerwuj
+                                </span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <div class="row g-4 pb-5">
-        <div class="col-lg-4 col-md-6" th:each="movie : ${movies}">
-            <div class="movie-card p-3 h-100">
-                <img th:src="${movie.posterUrl}" class="poster-img" alt="Poster">
-                <div class="pt-3">
-                    <h4 class="fw-bold mb-1" th:text="${movie.title}">Tytuł</h4>
-                    <p class="text-muted small mb-2" th:text="${movie.genre}">Gatunek</p>
-                    <div class="fw-bold">★ <span th:text="${movie.rating}">0.0</span></div>
-                    <a th:href="@{/movie/{id}(id=${movie.id})}" class="btn-reserve-small">Zarezerwuj</a>
+        <div class="col-md-6" id="premiery">
+            <div class="figma-block shadow-lg">
+                <h4 class="fw-bold mb-3">Premiery i zapowiedzi</h4>
+                <div class="compact-grid">
+                    <div class="col-movie" th:each="movie : ${comingSoon}">
+                        <a th:href="@{/movie/{id}(id=${movie.id})}" class="text-decoration-none">
+                            <div class="movie-card-mini">
+                                <img th:src="${movie.posterUrl}" class="poster-img-mini" alt="">
+                                <div class="fw-bold text-truncate" th:text="${movie.title}">Tytuł</div>
+                                <div class="d-flex justify-content-between mt-1 small">
+                                    <span th:text="${movie.genre}">Gatunek</span>
+                                    <span style="color:#ffc107;">★ <span th:text="${movie.rating}"></span></span>
+                                </div>
+                                <span class="btn btn-secondary btn-sm w-100 rounded-pill mt-2" style="pointer-events:none;">Wkrótce</span>
+                            </div>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+<!-- Planning Banner -->
+<div class="section-card planning-banner d-flex p-0 overflow-hidden">
+    <div class="p-5 flex-fill">
+        <div class="badge-custom">Szykujmy twój seans razem</div>
+        <h2 class="fw-bold mb-3" style="font-size: 38px; letter-spacing: -0.01em;">Wybierz datę i sprawdź dostępne filmy.</h2>
+        <p style="font-size: 16px; line-height: 1.55; max-width: 480px; color: rgba(0,0,0,0.75);">
+            Wybierz datę w kalendarzu i sprawdź, jakie filmy są dostępne tego dnia.
+            Kinoza od razu przeniesie Cię do repertuaru z wybranym terminem.
+        </p>
+        <a href="/bilety/1" class="planning-cta">Dowiedz się więcej →</a>
+    </div>
+    <div class="planning-banner-img">
+        <img src="/images/hero-collage (2).png" alt="">
+    </div>
+</div>
+
+<!-- Twoja przestrzeń -->
+<div th:if="${session.currentUser != null}" class="section-card shadow-lg">
+    <h3 class="fw-bold mb-4">Twoja przestrzeń filmowa</h3>
+    <div class="d-flex align-items-center gap-3 mb-4">
+        <div style="border:2px solid #000;border-radius:50%;width:50px;height:50px;
+                    display:flex;align-items:center;justify-content:center;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                 stroke="#000" stroke-width="2" stroke-linecap="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+        </div>
+        <div>
+            <h4 class="fw-bold m-0">Cześć, <span th:text="${session.currentUser}">Ivan</span></h4>
+            <p class="text-muted m-0 small">Masz już 39 obejrzanych filmów w Kinoza.</p>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-md-6" th:each="m, st : ${nowPlaying}" th:if="${st.index < 2}">
+            <a th:href="@{/movie/{id}(id=${m.id})}" class="text-decoration-none">
+                <div class="inner-dark-card d-flex gap-2 align-items-center">
+                    <img th:src="${m.posterUrl}" alt=""
+                         style="width:60px;height:90px;object-fit:cover;border-radius:8px;">
+                    <div>
+                        <h6 class="fw-bold m-0" style="color:#FAFFBE;" th:text="${m.title}">Film</h6>
+                        <small style="color:#aaa;">Wczoraj, 19:30 · Sala 4</small>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <a href="/moje-kino" class="btn btn-dark rounded-pill mt-4">Przejdź do mojego kina →</a>
+</div>
+
+<!-- Jesli nie jestes zalogowany poprosi sie zalogowac -->
+<div th:if="${session.currentUser == null}" class="section-card text-center">
+    <h3 class="fw-bold">Chcesz mieć osobistą przestrzeń filmową?</h3>
+    <p>Zaloguj się, aby zapisywać bilety, oceny i listę „Chcę obejrzeć".</p>
+    <a href="/login" class="btn btn-dark rounded-pill px-4">Zaloguj się</a>
+</div>
+
+<!-- FAQ -->
+<div class="section-card shadow-lg" id="faq">
+    <h3 class="fw-bold mb-2">FAQ</h3>
+    <p class="text-muted mb-4">Masz pytania? Mamy odpowiedzi</p>
+
+    <div class="accordion" id="faqAcc">
+        <div class="accordion-item mb-2" style="border-radius:16px;background:#F0F6AF;">
+            <h2 class="accordion-header">
+                <button class="accordion-button rounded-3" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#faq1"
+                        style="background:transparent;font-size:20px;">
+                    Jak kupić bilet online?
+                </button>
+            </h2>
+            <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAcc">
+                <div class="accordion-body">Wybierz film, datę i godzinę seansu, zaznacz miejsca i przejdź do płatności.
+                    Po zakupie bilet znajdziesz w swoim koncie oraz w e-mailu.</div>
+            </div>
+        </div>
+        <div class="accordion-item mb-2" style="border-radius:16px;background:#F0F6AF;">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed rounded-3" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#faq2"
+                        style="background:transparent;font-size:20px;">
+                    Czy mogę wybrać konkretne miejsca?
+                </button>
+            </h2>
+            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAcc">
+                <div class="accordion-body">Tak, system pozwala wybrać dowolne dostępne miejsce na interaktywnej mapie sali.</div>
+            </div>
+        </div>
+        <div class="accordion-item mb-2" style="border-radius:16px;background:#F0F6AF;">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed rounded-3" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#faq3"
+                        style="background:transparent;font-size:20px;">
+                    Jakie metody płatności są dostępne?
+                </button>
+            </h2>
+            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAcc">
+                <div class="accordion-body">Akceptujemy BLIK, karty Visa/Mastercard oraz Apple Pay.</div>
+            </div>
+        </div>
+        <a href="/pomoc" class="d-block text-end fw-bold mt-3">Wszystkie pytania →</a>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:replace="~{fragments/navbar :: navbarScript}"></script>
 </body>
 </html>

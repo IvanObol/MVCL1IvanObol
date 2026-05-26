@@ -8,22 +8,23 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class Seat {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private int rowNum;
     private int seatNum;
-    private boolean isReserved;
+    private boolean reserved;
 
     @ManyToOne
-    @JoinColumn(name = "movie_id")
-    private Movie movie;
+    @JoinColumn(name = "showing_id")
+    private Showing showing;
 
-    public Seat(int rowNum, int seatNum, boolean isReserved, Movie movie) {
+    public Seat(int rowNum, int seatNum, boolean reserved, Showing showing) {
         this.rowNum = rowNum;
         this.seatNum = seatNum;
-        this.isReserved = isReserved;
-        this.movie = movie;
+        this.reserved = reserved;
+        this.showing = showing;
     }
 }

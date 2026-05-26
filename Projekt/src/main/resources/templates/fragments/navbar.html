@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="navbar" class="custom-navbar shadow-sm">
+
+    <div class="d-flex gap-2 align-items-center">
+        <a class="kinoza-nav-btn is-logo" href="/" data-megamenu="kinoza" data-logo>Kinoza</a>
+        <a class="kinoza-nav-btn" href="/moje-kino" data-megamenu="moje-kino">Moje kino</a>
+        <a class="kinoza-nav-btn" href="/pomoc" data-megamenu="pomoc">Pomoc</a>
+        <a class="kinoza-nav-btn" href="/zaplanuj" data-megamenu="zaplanuj">Zaplanuj seans</a>
+        <a th:if="${session.currentRole == 'ADMIN'}"
+           class="kinoza-nav-btn" href="/admin" style="background:#262626;color:#FAFFBE;">
+            Admin
+        </a>
+    </div>
+
+    <!-- Mega-menu panels -->
+    <div class="kinoza-panel" data-megamenu-panel="kinoza" aria-hidden="true">
+        <div class="kinoza-panel-inner">
+            <div class="kinoza-left">
+                <span class="kinoza-badge">Poznaj Kinoza</span>
+                <nav class="kinoza-categories">
+                    <a href="/#teraz">Repertuar</a>
+                    <a href="/#premiery">Premiery</a>
+                    <a href="/pomoc">Pomoc</a>
+                </nav>
+                <p class="kinoza-desc">
+                    Przeglądaj wszystko, co dzieje się w Kinoza: aktualny repertuar,
+                    filmy dostępne w kinie, nadchodzące premiery i wydarzenia specjalne.
+                </p>
+                <a href="/" class="kinoza-more">Strona główna →</a>
+            </div>
+            <div class="kinoza-right">
+                <img src="/images/Kinoza-img.jpg" alt="">
+            </div>
+        </div>
+    </div>
+
+    <div class="kinoza-panel" data-megamenu-panel="moje-kino" aria-hidden="true">
+        <div class="kinoza-panel-inner">
+            <div class="kinoza-left">
+                <span class="kinoza-badge">Tworzymy twoje kino</span>
+                <nav class="kinoza-categories">
+                    <a href="/moje-kino#bilety">Moje bilety</a>
+                    <a href="/moje-kino#wishlist">Chcę obejrzeć</a>
+                    <a href="/moje-kino#oceny">Moje oceny</a>
+                </nav>
+                <p class="kinoza-desc">
+                    Twoja osobista przestrzeń filmowa z biletami, listą „Chcę obejrzeć",
+                    ocenami i notatkami po seansach.
+                </p>
+                <a href="/moje-kino" class="kinoza-more">Otwórz profil →</a>
+            </div>
+            <div class="kinoza-right">
+                <img src="/images/Kinoza-img.jpg" alt="">
+            </div>
+        </div>
+    </div>
+
+    <div class="kinoza-panel" data-megamenu-panel="pomoc" aria-hidden="true">
+        <div class="kinoza-panel-inner">
+            <div class="kinoza-left">
+                <span class="kinoza-badge">Jesteśmy chętni do pomocy</span>
+                <nav class="kinoza-categories">
+                    <a href="/pomoc">FAQ</a>
+                    <a href="/pomoc">Kontakt</a>
+                    <a href="/pomoc">Zwroty biletów</a>
+                </nav>
+                <p class="kinoza-desc">
+                    Znajdź odpowiedzi na pytania o zakup biletów, płatności, wybór miejsc i zwroty.
+                </p>
+                <a href="/pomoc" class="kinoza-more">Dowiedz się więcej →</a>
+            </div>
+            <div class="kinoza-right">
+                <img src="/images/Kinoza-img.jpg" alt="">
+            </div>
+        </div>
+    </div>
+
+    <div class="kinoza-panel" data-megamenu-panel="zaplanuj" aria-hidden="true">
+        <div class="kinoza-panel-inner">
+            <div class="kinoza-left">
+                <span class="kinoza-badge">Szykujmy twój seans razem</span>
+                <p class="kinoza-desc" style="margin-top:30px;">
+                    Wybierz datę w kalendarzu i sprawdź, jakie filmy są dostępne tego dnia.
+                </p>
+                <a href="/zaplanuj" class="kinoza-more">Otwórz kalendarz →</a>
+            </div>
+            <div class="kinoza-right">
+                <img src="/images/Kinoza-img.jpg" alt="">
+            </div>
+        </div>
+    </div>
+
+    <div id="kinoza-backdrop" class="kinoza-backdrop"></div>
+
+    <!-- Right icons -->
+    <div class="navbar-icons">
+        <form action="/search" method="get" class="navbar-search" role="search">
+            <input type="text" name="q" placeholder="Szukaj filmu" data-testid="navbar-search-input">
+            <button type="submit" aria-label="Szukaj" data-testid="navbar-search-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+            </button>
+        </form>
+        <a href="/zaplanuj" class="navbar-cta-pill" data-testid="navbar-buy-ticket">Kup bilet</a>
+        <a th:if="${session.currentUser == null}" href="/login"
+           class="navbar-icon-circle"
+           data-testid="navbar-user-icon-guest" title="Zaloguj się">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle>
+            </svg>
+        </a>
+        <a th:if="${session.currentUser != null}" href="/moje-kino"
+           class="navbar-icon-circle"
+           th:title="'Profil (' + ${session.currentUser} + ')'"
+           data-testid="navbar-user-icon-logged">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle>
+            </svg>
+        </a>
+        <button type="button" class="navbar-lang" data-testid="navbar-lang" data-lang-toggle>PL</button>
+    </div>
+</div>
+
+<!-- Language modal -->
+<div id="kinoza-lang-modal" class="kinoza-lang-modal" aria-hidden="true">
+    <div class="kinoza-lang-modal-backdrop" data-lang-close></div>
+    <div class="kinoza-lang-modal-card" role="dialog" aria-modal="true">
+        <button type="button" class="kinoza-lang-close" aria-label="Zamknij" data-lang-close>×</button>
+        <h4 class="fw-bold mb-1">Wybierz język</h4>
+        <p class="text-muted small mb-4">Choose your language</p>
+        <div class="kinoza-lang-options">
+            <label class="kinoza-lang-opt">
+                <input type="radio" name="lang" value="pl" checked>
+                <span class="lang-flag">🇵🇱</span>
+                <span>Polski</span>
+            </label>
+            <label class="kinoza-lang-opt">
+                <input type="radio" name="lang" value="ru">
+                <span class="lang-flag">🇷🇺</span>
+                <span>Русский</span>
+            </label>
+        </div>
+        <button type="button" class="btn-reserve-main mt-4 w-100" data-lang-close data-testid="lang-save">
+            Zapisz / Сохранить
+        </button>
+    </div>
+</div>
+
+<!-- Script для mega-menu -->
+<script th:fragment="navbarScript">
+    (function () {
+        const triggers = document.querySelectorAll('[data-megamenu]');
+        const panels   = document.querySelectorAll('[data-megamenu-panel]');
+        const backdrop = document.getElementById('kinoza-backdrop');
+        if (!backdrop) return;
+
+        function closeAll() {
+            panels.forEach(p => { p.classList.remove('is-open'); p.setAttribute('aria-hidden','true'); });
+            triggers.forEach(t => t.classList.remove('is-active'));
+            backdrop.classList.remove('is-open');
+        }
+        function openPanel(name) {
+            closeAll();
+            const panel = document.querySelector(`[data-megamenu-panel="${name}"]`);
+            const trigger = document.querySelector(`[data-megamenu="${name}"]`);
+            if (!panel) return;
+            panel.classList.add('is-open');
+            panel.setAttribute('aria-hidden','false');
+            if (trigger) trigger.classList.add('is-active');
+            backdrop.classList.add('is-open');
+        }
+        triggers.forEach(btn => btn.addEventListener('click', e => {
+            // Logo: jeśli nie jesteś na "/", po prostu przekieruj na "/"
+            if (btn.hasAttribute('data-logo')) {
+                if (window.location.pathname !== '/' && window.location.pathname !== '') {
+                    return; // pozwol link odprawic
+                }
+            }
+            const name = btn.dataset.megamenu;
+            const panel = document.querySelector(`[data-megamenu-panel="${name}"]`);
+            if (!panel) return;
+            e.preventDefault();
+            e.stopPropagation();
+            panel.classList.contains('is-open') ? closeAll() : openPanel(name);
+        }));
+        backdrop.addEventListener('click', closeAll);
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeAll(); });
+        document.addEventListener('click', e => {
+            if (!e.target.closest('.kinoza-panel') && !e.target.closest('[data-megamenu]')) closeAll();
+        });
+
+        // ----- Language modal -----
+        const langToggle = document.querySelector('[data-lang-toggle]');
+        const langModal = document.getElementById('kinoza-lang-modal');
+        if (langToggle && langModal) {
+            const open = () => langModal.classList.add('is-open');
+            const close = () => langModal.classList.remove('is-open');
+            langToggle.addEventListener('click', open);
+            langModal.querySelectorAll('[data-lang-close]').forEach(el => el.addEventListener('click', close));
+            document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+        }
+    })();
+</script>
+
+</body>
+</html>

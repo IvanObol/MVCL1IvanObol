@@ -1,7 +1,7 @@
-# CinemaT — System Rezerwacji Biletów Kinowych
+# Kinoza — System Rezerwacji Biletów Kinowych
 
 ## 1. Opis projektu
-Projekt „CinemaT” (NAZWA MOZE SIE ZMIENIC) to nowoczesna aplikacja webowa służąca do zarządzania procesem rezerwacji biletów w kinie. System umożliwia przeglądanie aktualnego repertuaru, interaktywny wybór miejsc na sali oraz prowadzenie osobistej biblioteki obejrzanych filmów wraz z ocenami.
+Projekt „Kinoza” (NAZWA MOZE SIE ZMIENIC) to nowoczesna aplikacja webowa służąca do zarządzania procesem rezerwacji biletów w kinie. System umożliwia przeglądanie aktualnego repertuaru, interaktywny wybór miejsc na sali oraz prowadzenie osobistej biblioteki obejrzanych filmów wraz z ocenami.
 
 **Technologie:**
 * **Backend:** Java 17+, Spring Boot 3.x
@@ -22,7 +22,7 @@ Projekt „CinemaT” (NAZWA MOZE SIE ZMIENIC) to nowoczesna aplikacja webowa s�
 * **Docker:** Konteneryzacja aplikacji (Dockerfile i docker-compose) dla łatwego wdrożenia[cite: 1, 3].
 
 ## 4. Instrukcja uruchomienia 
-1. Sklonuj repozytorium: `git clone https://github.com/TwojUser/CinemaT.git`
+1. Sklonuj repozytorium: `git clone https://github.com/TwojUser/Kinoza.git`
 2. Skonfiguruj bazę danych w `application.properties`.
 3. Uruchom aplikację: `./mvnw spring-boot:run`
 4. Aplikacja dostępna pod adresem: `http://localhost:8080`

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Moje kino')}"></head>
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<!-- Header user -->
+<div class="section-card">
+    <div class="d-flex align-items-center gap-3 flex-wrap">
+        <div style="border:2px solid #000;border-radius:50%;width:60px;height:60px;
+                    display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none"
+                 stroke="#000" stroke-width="2" stroke-linecap="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+        </div>
+        <div>
+            <h2 class="fw-bold m-0" data-testid="moje-kino-hello">
+                Cześć, <span th:text="${session.currentUser}">Ivan</span>
+            </h2>
+            <p class="text-muted m-0">
+                <strong><span th:text="${ticketCount}" data-testid="ticket-count-total">0</span></strong>
+                <span th:text="${ticketCount == 1 ? 'aktywny bilet' : 'aktywnych biletów'}">biletów</span>
+                ·
+                <strong><span th:text="${#lists.size(wishlist)}" data-testid="wishlist-count">0</span></strong>
+                w „Chcę obejrzeć"
+                ·
+                <strong><span th:text="${#lists.size(myReviews)}" data-testid="reviews-count">0</span></strong>
+                <span th:text="${#lists.size(myReviews) == 1 ? 'ocena' : 'ocen'}">ocen</span>
+            </p>
+        </div>
+        <a href="/logout" class="btn-outline-main ms-auto" data-testid="logout-btn">Wyloguj →</a>
+    </div>
+
+    <!-- Konto usera -->
+    <div class="d-flex flex-wrap gap-2 mt-4 mk-tabs">
+        <a href="#bilety" class="choice-btn">🎟️ Moje bilety</a>
+        <a href="#wishlist" class="choice-btn">⭐ Chcę obejrzeć</a>
+        <a href="#oceny" class="choice-btn">📝 Moje oceny</a>
+        <a href="#biblioteka" class="choice-btn">🎬 Biblioteka</a>
+    </div>
+</div>
+
+<!-- Bilety -->
+<div class="section-card" id="bilety">
+    <h4 class="fw-bold mb-3">Moje bilety</h4>
+
+    <div th:if="${groupedTickets.isEmpty()}" class="empty-tickets" data-testid="no-tickets">
+        <div style="font-size:48px;line-height:1;">🎟️</div>
+        <p class="mt-2 mb-1 fw-bold">Brak biletów</p>
+        <p class="text-muted small m-0">
+            Po zakupie biletu pojawi się tutaj. <a href="/zaplanuj" class="text-dark">Kup pierwszy bilet →</a>
+        </p>
+    </div>
+
+    <div class="row g-3" data-testid="tickets-list">
+        <div class="col-md-6" th:each="entry : ${groupedTickets}">
+            <div class="ticket-card" th:with="ts=${entry.value}, t0=${entry.value[0]}">
+                <span class="ticket-notch ticket-notch-left"></span>
+                <span class="ticket-notch ticket-notch-right"></span>
+
+                <div class="d-flex gap-3 align-items-start">
+                    <img th:src="${t0.showing.movie.posterUrl}" alt="" class="ticket-poster">
+                    <div class="flex-grow-1">
+                        <h5 class="fw-bold m-0" th:text="${t0.showing.movie.title}">Tytul</h5>
+                        <small class="text-muted"
+                               th:text="${t0.showing.movie.genre + ' · ' + t0.showing.movie.format + ' · ' + t0.showing.movie.ageLimit}">
+                            info
+                        </small>
+                        <div class="mt-2 small">
+                            📍 <strong th:text="${t0.showing.cinema.name}">Kino</strong>
+                            · Sala <span th:text="${t0.showing.hallNumber}">3</span>
+                        </div>
+                        <div class="small">
+                            🗓️ <strong th:text="${#temporals.format(t0.showing.startTime, 'dd.MM.yyyy HH:mm')}">data</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ticket-divider"></div>
+
+                <div class="d-flex justify-content-between align-items-end gap-2 flex-wrap">
+                    <div>
+                        <div class="small text-muted mb-1">Twoje miejsca</div>
+                        <div class="d-flex flex-wrap gap-1">
+                            <span th:each="t : ${ts}" class="seat-chip-mini"
+                                  th:text="'rz. ' + ${t.seat.rowNum} + ' m. ' + ${t.seat.seatNum}">rz.3 m.4</span>
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <div class="small text-muted">Zapłacono</div>
+                        <div class="fw-bold" th:text="${#lists.size(ts)} + ' × 28 zł'">1 × 28 zł</div>
+                        <div class="small text-muted">
+                            <span th:text="${t0.paymentMethod}">BLIK</span>
+                            · <span th:text="${#temporals.format(t0.purchasedAt, 'dd.MM.yyyy')}">data</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chce Obejrzec -->
+<div class="section-card" id="wishlist">
+    <h4 class="fw-bold mb-3">⭐ Chcę obejrzeć</h4>
+
+    <div th:if="${wishlist.isEmpty()}" class="empty-tickets" data-testid="no-wishlist">
+        <div style="font-size:42px;line-height:1;">⭐</div>
+        <p class="mt-2 mb-1 fw-bold">Lista jest pusta</p>
+        <p class="text-muted small m-0">
+            Dodawaj filmy z karty filmu (przycisk „+ Chcę obejrzeć"),
+            albo z biblioteki poniżej.
+        </p>
+    </div>
+
+    <div class="row g-3" data-testid="wishlist-list">
+        <div class="col-md-4 col-sm-6" th:each="w : ${wishlist}">
+            <div class="library-card">
+                <a th:href="@{/movie/{id}(id=${w.movie.id})}" class="text-decoration-none d-flex gap-3">
+                    <img th:src="${w.movie.posterUrl}" alt="" class="library-poster">
+                    <div class="flex-grow-1">
+                        <h6 class="fw-bold m-0" th:text="${w.movie.title}">Tytuł</h6>
+                        <small class="text-muted"
+                               th:text="${w.movie.genre + ' · ' + w.movie.duration + ' min'}">info</small>
+                        <div class="small mt-1" style="color:#b88a00;">
+                            ★ <span th:text="${w.movie.rating}">8.0</span>
+                        </div>
+                    </div>
+                </a>
+                <form th:action="@{/movie/{id}/wishlist/remove(id=${w.movie.id})}" method="post" class="mt-2">
+                    <button type="submit" class="library-remove-btn" data-testid="remove-from-wishlist">
+                        Usuń z listy
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Oceny -->
+<div class="section-card" id="oceny">
+    <h4 class="fw-bold mb-3">📝 Moje oceny</h4>
+
+    <div th:if="${myReviews.isEmpty()}" class="empty-tickets" data-testid="no-reviews">
+        <div style="font-size:42px;line-height:1;">📝</div>
+        <p class="mt-2 mb-1 fw-bold">Nie oceniłeś jeszcze żadnego filmu</p>
+        <p class="text-muted small m-0">
+            Wejdź na stronę dowolnego filmu i podziel się oceną oraz opinią.
+        </p>
+    </div>
+
+    <div class="row g-3" data-testid="reviews-list">
+        <div class="col-md-6" th:each="r : ${myReviews}">
+            <div class="inner-dark-card h-100">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <a th:href="@{/movie/{id}(id=${r.movie.id})}"
+                       class="fw-bold text-decoration-none"
+                       style="color:#FAFFBE;" th:text="${r.movie.title}">Tytuł</a>
+                    <small style="color:#aaa;"
+                           th:text="${#temporals.format(r.createdAt, 'dd.MM.yyyy')}">data</small>
+                </div>
+                <div style="color:#ffc107;font-weight:700;" class="mb-2">
+                    ★ <span th:text="${r.stars}">5</span> / 5
+                </div>
+                <p class="m-0 small" style="color:#eaeaea;" th:text="${r.text}">…</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Biblioteka -->
+<div class="section-card" id="biblioteka">
+    <h4 class="fw-bold mb-2">🎬 Biblioteka filmów</h4>
+    <p class="text-muted small mb-3">
+        Tutaj możesz dodać dowolny film z naszego repertuaru do listy „Chcę obejrzeć",
+        nawet jeśli jeszcze nie kupiłeś biletu.
+    </p>
+
+    <div class="row g-3" data-testid="library-list">
+        <div class="col-md-4 col-sm-6" th:each="m : ${allMovies}">
+            <div class="library-card">
+                <a th:href="@{/movie/{id}(id=${m.id})}" class="text-decoration-none d-flex gap-3">
+                    <img th:src="${m.posterUrl}" alt="" class="library-poster">
+                    <div class="flex-grow-1">
+                        <h6 class="fw-bold m-0" th:text="${m.title}">Tytuł</h6>
+                        <small class="text-muted"
+                               th:text="${m.genre + ' · ' + m.duration + ' min'}">info</small>
+                        <div class="small mt-1" style="color:#b88a00;">
+                            ★ <span th:text="${m.rating}">8.0</span>
+                        </div>
+                    </div>
+                </a>
+                <form th:action="@{/movie/{id}/wishlist/add(id=${m.id})}" method="post" class="mt-2">
+                    <button type="submit" class="library-add-btn" data-testid="library-add-btn">
+                        + Chcę obejrzeć
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="section-card text-center" style="padding:30px;">
+    <a href="/" class="btn-outline-main">← Powrót na stronę główną</a>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:replace="~{fragments/navbar :: navbarScript}"></script>
+
+<style>
+    .mk-tabs a { text-decoration: none; }
+    .mk-tabs .choice-btn { font-weight: 600; }
+
+    .empty-tickets {
+        background: rgba(0,0,0,0.05);
+        border-radius: 16px;
+        padding: 24px;
+        text-align: center;
+        margin-bottom: 12px;
+    }
+    .ticket-card {
+        position: relative;
+        background: linear-gradient(180deg, #FDFFD1 0%, #F0F6AF 100%);
+        border: 1px solid rgba(0,0,0,0.08);
+        border-radius: 18px;
+        padding: 18px 20px;
+        height: 100%;
+        overflow: hidden;
+    }
+    .ticket-notch {
+        position: absolute;
+        top: 50%;
+        width: 18px; height: 18px;
+        background: #FAFFBE;
+        border: 1px solid rgba(0,0,0,0.08);
+        border-radius: 50%;
+        transform: translateY(-50%);
+    }
+    .ticket-notch-left  { left:  -10px; }
+    .ticket-notch-right { right: -10px; }
+    .ticket-poster {
+        width: 70px; height: 100px;
+        object-fit: cover; border-radius: 10px; flex-shrink: 0;
+    }
+    .ticket-divider {
+        border-top: 1.5px dashed rgba(0,0,0,0.25);
+        margin: 14px 0 12px;
+    }
+    .seat-chip-mini {
+        background: #FAFFBE;
+        border: 1px solid rgba(0,0,0,0.15);
+        border-radius: 999px;
+        padding: 3px 10px;
+        font-size: 12px;
+    }
+
+    /* library / wishlist cards */
+    .library-card {
+        background: #FDFFD1;
+        border: 1px solid rgba(0,0,0,0.08);
+        border-radius: 16px;
+        padding: 14px;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .library-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.12); }
+    .library-card a { color: #000 !important; }
+    .library-poster {
+        width: 56px; height: 84px; object-fit: cover;
+        border-radius: 8px; flex-shrink: 0;
+    }
+    .library-add-btn, .library-remove-btn {
+        width: 100%;
+        border-radius: 999px;
+        padding: 7px 14px;
+        font-size: 13px;
+        font-weight: 600;
+        border: 1.5px solid #262626;
+        cursor: pointer;
+        transition: background 0.15s ease, color 0.15s ease;
+    }
+    .library-add-btn { background: transparent; color: #262626; }
+    .library-add-btn:hover { background: #262626; color: #FAFFBE; }
+    .library-remove-btn { background: #262626; color: #FAFFBE; }
+    .library-remove-btn:hover { background: #000; }
+</style>
+</body>
+</html>

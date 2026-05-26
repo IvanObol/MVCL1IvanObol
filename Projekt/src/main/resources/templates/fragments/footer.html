@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="footer" class="custom-footer shadow-lg">
+    <div class="row align-items-center g-4">
+        <div class="col-md-6">
+            <h1 class="m-0" style="font-size: 112px; letter-spacing: -3px; font-weight: 800; line-height: 0.95;">Kinoza</h1>
+            <p class="mt-3" style="font-size: 16px; line-height: 1.5; max-width: 400px;">
+                Twoje kino online — repertuar, bilety, premiery i osobista historia filmowa w jednym miejscu.
+            </p>
+            <div class="d-flex gap-3 mt-3 flex-wrap" style="font-size:14px; font-weight: 500;">
+                <a href="/pomoc">FAQ</a>
+                <a href="/pomoc">Kontakt</a>
+                <a href="/pomoc">Zwroty</a>
+                <a href="/pomoc">Polityka prywatności</a>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="calendar-box" data-testid="footer-calendar">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <h5 class="fw-bold m-0">Kalendarz seansów</h5>
+                    <div class="cal-nav">
+                        <button type="button" class="cal-nav-btn" data-cal-nav="-1"
+                                aria-label="Poprzedni miesiąc" data-testid="cal-prev">‹</button>
+                        <button type="button" class="cal-nav-btn" data-cal-nav="today"
+                                aria-label="Dzisiaj" data-testid="cal-today">•</button>
+                        <button type="button" class="cal-nav-btn" data-cal-nav="1"
+                                aria-label="Następny miesiąc" data-testid="cal-next">›</button>
+                    </div>
+                </div>
+                <p class="mb-3" id="cal-month-label" data-testid="cal-month-label">…</p>
+                <div class="row text-center g-2 fw-bold small">
+                    <div class="col">Nd</div><div class="col">Pon</div><div class="col">Wt</div>
+                    <div class="col">Śr</div><div class="col">Czw</div><div class="col">Pt</div><div class="col">Sob</div>
+                </div>
+                <div id="cal-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            const grid  = document.getElementById('cal-grid');
+            const label = document.getElementById('cal-month-label');
+            if (!grid || !label) return;
+
+            const MONTHS_PL = [
+                'Styczeń','Luty','Marzec','Kwiecień','Maj','Czerwiec',
+                'Lipiec','Sierpień','Wrzesień','Październik','Listopad','Grudzień'
+            ];
+            const today = new Date();
+            let viewYear  = today.getFullYear();
+            let viewMonth = today.getMonth();
+
+            function pad(n) { return n < 10 ? '0' + n : '' + n; }
+            function makeRow() {
+                const r = document.createElement('div');
+                r.className = 'row text-center g-2 mt-2 small';
+                return r;
+            }
+            function makeCell(html) {
+                const c = document.createElement('div');
+                c.className = 'col';
+                c.innerHTML = html;
+                return c;
+            }
+            function render() {
+                label.textContent = MONTHS_PL[viewMonth] + ' ' + viewYear;
+                grid.innerHTML = '';
+                const firstDay = new Date(viewYear, viewMonth, 1).getDay();
+                const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+
+                let row = makeRow();
+                for (let i = 0; i < firstDay; i++) row.appendChild(makeCell(''));
+
+                let dow = firstDay;
+                for (let d = 1; d <= daysInMonth; d++) {
+                    const isToday = (d === today.getDate()
+                        && viewMonth === today.getMonth()
+                        && viewYear  === today.getFullYear());
+                    const cls = ['cal-day'];
+                    if (dow === 0) cls.push('is-sunday');
+                    if (dow === 6) cls.push('is-saturday');
+                    if (isToday)   cls.push('is-today');
+
+                    const dateStr = viewYear + '-' + pad(viewMonth + 1) + '-' + pad(d);
+                    const cell = makeCell(
+                        '<a class="' + cls.join(' ') + '"'
+                        + ' href="/?date=' + dateStr + '#teraz"'
+                        + ' data-testid="cal-day-' + d + '"'
+                        + ' title="Repertuar na ' + dateStr + '">' + d + '</a>'
+                    );
+                    row.appendChild(cell);
+                    dow = (dow + 1) % 7;
+                    if (dow === 0 && d !== daysInMonth) {
+                        grid.appendChild(row);
+                        row = makeRow();
+                    }
+                }
+                while (dow !== 0 && dow < 7) {
+                    row.appendChild(makeCell(''));
+                    dow++;
+                }
+                grid.appendChild(row);
+            }
+
+            document.querySelectorAll('[data-cal-nav]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const v = btn.dataset.calNav;
+                    if (v === 'today') {
+                        viewYear  = today.getFullYear();
+                        viewMonth = today.getMonth();
+                    } else {
+                        viewMonth += parseInt(v, 10);
+                        if (viewMonth < 0)  { viewMonth = 11; viewYear--; }
+                        if (viewMonth > 11) { viewMonth = 0;  viewYear++; }
+                    }
+                    render();
+                });
+            });
+            render();
+        })();
+    </script>
+</div>
+
+<style>
+    .cal-nav { display: inline-flex; gap: 4px; }
+    .cal-nav-btn {
+        background: rgba(250,255,190,0.12);
+        color: #FAFFBE;
+        border: 1px solid rgba(250,255,190,0.3);
+        border-radius: 10px;
+        width: 30px; height: 30px;
+        font-size: 16px;
+        line-height: 1;
+        cursor: pointer;
+        transition: background .15s;
+        font-family: inherit;
+    }
+    .cal-nav-btn:hover { background: rgba(250,255,190,0.3); }
+
+    a.cal-day, a.cal-day:link, a.cal-day:visited, a.cal-day:active {
+        display: block;
+        text-align: center;
+        font-size: 13px;
+        line-height: 1;
+        padding: 7px 0;
+        border-radius: 8px;
+        color: #FAFFBE !important;
+        text-decoration: none !important;
+        transition: background .15s;
+        cursor: pointer;
+        background: transparent;
+        width: 100%;
+        font-weight: 500;
+    }
+    a.cal-day:hover {
+        background: rgba(250,255,190,0.2) !important;
+        color: #FAFFBE !important;
+    }
+    a.cal-day.is-sunday,
+    a.cal-day.is-sunday:link,
+    a.cal-day.is-sunday:visited   { color: #ff8c8c !important; }
+    a.cal-day.is-saturday,
+    a.cal-day.is-saturday:link,
+    a.cal-day.is-saturday:visited { color: #ffd28c !important; }
+    a.cal-day.is-today,
+    a.cal-day.is-today:link,
+    a.cal-day.is-today:visited {
+        background: #FAFFBE !important;
+        color: #262626 !important;
+        font-weight: 700;
+    }
+    .calendar-box .row.text-center.fw-bold.small > .col {
+        color: rgba(250,255,190,0.65);
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+</style>
+</body>
+</html>

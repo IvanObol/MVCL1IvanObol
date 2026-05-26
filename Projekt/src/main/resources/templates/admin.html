@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Panel Admina - Kinoza')}"></head>
+<body>
+
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="section-card">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <span class="badge-custom">Tylko dla administratora</span>
+            <h2 class="fw-bold mt-2">Zarządzaj filmami</h2>
+        </div>
+        <a href="/admin/movie/new" class="btn-reserve-main">+ Dodaj film</a>
+    </div>
+
+    <table class="table">
+        <thead>
+        <tr><th>ID</th><th>Tytuł</th><th>Reżyser</th><th>Status</th><th>Ocena</th><th></th></tr>
+        </thead>
+        <tbody>
+        <tr th:each="m : ${movies}">
+            <td th:text="${m.id}">1</td>
+            <td th:text="${m.title}">Tytuł</td>
+            <td th:text="${m.director}">Reż.</td>
+            <td th:text="${m.status}">NOW</td>
+            <td th:text="${m.rating}">8.0</td>
+            <td>
+                <form th:action="@{/admin/movie/{id}/delete(id=${m.id})}" method="post"
+                      onsubmit="return confirm('Na pewno usunąć?');">
+                    <button type="submit" class="btn btn-sm btn-outline-danger">Usuń</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:replace="~{fragments/navbar :: navbarScript}"></script>
+</body>
+</html>
